@@ -12,6 +12,7 @@ library(tidyverse)
 url_to_read<-"https://intro-datascience.s3.us-east-2.amazonaws.com/Resort01.csv"
 data <- read_csv(url(url_to_read))
 str(data)
+##
 ```
 
 ```{r}
