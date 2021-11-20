@@ -1,0 +1,101 @@
+---
+title: "final_project"
+author: "shourya goel"
+date: "17/11/2021"
+output: pdf_document
+---
+```{r}
+# importing libraries
+#install.packages("arules")
+#install.packages("arulesViz")
+
+library(tidyverse)
+library(arules)
+library(arulesViz)
+```
+
+```{r}
+# reading the source file 
+resort_url<-"https://intro-datascience.s3.us-east-2.amazonaws.com/Resort01.csv"
+raw_data <- read_csv(resort_url)
+hotelData <- read_csv(resort_url)
+str(hotelData)
+summary(hotelData)
+```
+
+```{r}
+# creating histograms for all numerical columns
+hist(hotelData$IsCanceled)
+hist(hotelData$LeadTime)
+hist(hotelData$StaysInWeekendNights)
+hist(hotelData$StaysInWeekNights)
+hist(hotelData$Adults)
+hist(hotelData$Children)
+hist(hotelData$Babies)
+hist(hotelData$IsRepeatedGuest)
+hist(hotelData$PreviousCancellations)
+hist(hotelData$PreviousBookingsNotCanceled)
+hist(hotelData$BookingChanges)
+```
+
+Converting required columns to categorical factor types
+```{r}
+hotelData$IsCanceled <- as.factor(hotelData$IsCanceled)
+hotelData$Meal <- as.factor(hotelData$Meal)
+hotelData$Country <- as.factor(hotelData$Country)
+hotelData$MarketSegment <- as.factor(hotelData$MarketSegment)
+hotelData$IsRepeatedGuest <- as.factor(hotelData$IsRepeatedGuest)
+hotelData$ReservedRoomType <- as.factor(hotelData$ReservedRoomType)
+hotelData$AssignedRoomType <- as.factor(hotelData$AssignedRoomType)
+hotelData$DepositType <- as.factor(hotelData$DepositType)
+hotelData$CustomerType <- as.factor(hotelData$CustomerType)
+```
+Checking for NA in columns
+```{r}
+sum(is.na(hotelData$LeadTime))
+sum(is.na(hotelData$StaysInWeekendNights))
+sum(is.na(hotelData$StaysInWeekNights))
+sum(is.na(hotelData$Adults))
+sum(is.na(hotelData$Children))
+sum(is.na(hotelData$Babies))
+sum(is.na(hotelData$PreviousCancellations))
+sum(is.na(hotelData$PreviousBookingsNotCanceled))
+sum(is.na(hotelData$BookingChanges))
+sum(is.na(hotelData$RequiredCarParkingSpaces))
+sum(is.na(hotelData$TotalOfSpecialRequests))
+#We can see that all the columns are clean
+```
+Producing tables of categorical variables
+
+```{r}
+table(hotelData$IsCanceled)
+table(hotelData$Meal)
+table(hotelData$Country)
+table(hotelData$MarketSegment)
+table(hotelData$IsRepeatedGuest)
+table(hotelData$ReservedRoomType)
+table(hotelData$AssignedRoomType)
+table(hotelData$DepositType)
+table(hotelData$CustomerType)
+```
+
+Association rule mining
+
+```{r}
+hotelDataTransactions <- as(hotelData, 'transactions')
+rules1 <- apriori(hotelDataTransactions,
+                  parameter=list(supp=0.1, conf=0.55),
+                  control=list(verbose=F),
+                  appearance=list(default="lhs",rhs=("IsCanceled=1")))
+inspect(rules1)
+```
+
+```{r}
+rules2 <- apriori(hotelDataTransactions,
+                  parameter=list(supp=0.08, conf=0.55),
+                  control=list(verbose=F),
+                  appearance=list(default="lhs",rhs=("IsCanceled=0")))
+inspect(rules2)
+```
+
+

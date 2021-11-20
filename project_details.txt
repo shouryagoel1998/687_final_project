@@ -1,0 +1,10 @@
+Feature Engineering
+1.	Data is clean. There are no missing values. No null, NA, or empty string found in the data
+2.	Few of the variables are in numeric and string. We converted required columns into categorical/factor type
+3.	We noticed that IsCanceled data is not imbalance otherwise we could have handled it by some sampling techniques
+4.	Checking for outliers: [Need to check with the professor regarding how to remove outliers]
+5.	Need to figure out the correlation of different variables or scatterplot to find
+6.	When we plot the histograms, most of them are right-skewed. Should we do a transformation to make it normal distribution?
+7.	We will be doing association rules for finding the patterns in the data w.r.t is canceled = 1
+8.	Multi-colinearity detection and removal
+9.	Need to run a different logistic regression with different x-variables and find optimized explanatory variable combination based on adjusted R-Square
