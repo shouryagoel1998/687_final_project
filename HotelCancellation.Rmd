@@ -13,7 +13,7 @@ output: pdf_document
 library(tidyverse)
 library(arules)
 library(arulesViz)
-library()
+library(rworldmap)
 ```
 
 ```{r}
