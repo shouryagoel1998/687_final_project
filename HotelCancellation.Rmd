@@ -8,10 +8,12 @@ output: pdf_document
 # importing libraries
 #install.packages("arules")
 #install.packages("arulesViz")
+#install.packages("rworldmap")
 
 library(tidyverse)
 library(arules)
 library(arulesViz)
+library()
 ```
 
 ```{r}
@@ -37,6 +39,24 @@ hist(hotelData$PreviousCancellations)
 hist(hotelData$PreviousBookingsNotCanceled)
 hist(hotelData$BookingChanges)
 ```
+
+```{r}
+# boxplots of all the numerical variables
+boxplot(LeadTime~IsCanceled,data=hotelData)
+boxplot(StaysInWeekendNights~IsCanceled,data=hotelData)
+boxplot(StaysInWeekNights~IsCanceled,data=hotelData)
+boxplot(Adults~IsCanceled,data=hotelData)
+boxplot(Children~IsCanceled,data=hotelData)
+boxplot(Babies~IsCanceled,data=hotelData)
+boxplot(IsRepeatedGuest~IsCanceled,data=hotelData)
+boxplot(PreviousCancellations~IsCanceled,data=hotelData)
+boxplot(PreviousBookingsNotCanceled~IsCanceled,data=hotelData)
+boxplot(BookingChanges~IsCanceled,data=hotelData)
+boxplot(RequiredCarParkingSpaces~IsCanceled,data=hotelData)
+boxplot(TotalOfSpecialRequests~IsCanceled,data=hotelData)
+
+```
+
 
 Converting required columns to categorical factor types
 ```{r}
@@ -98,4 +118,11 @@ rules2 <- apriori(hotelDataTransactions,
 inspect(rules2)
 ```
 
+```{r}
+# divinding data into cancelled and not cancelled data frames
+temp <- hotelData[hotelData$IsCanceled==1,]
+boxplot(temp$IsCanceled)
+temp2 <- hotelData[hotelData$IsCanceled==0, ]
+boxplot(temp2$IsCanceled)
+```
 
