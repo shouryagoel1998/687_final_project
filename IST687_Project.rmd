@@ -1,0 +1,90 @@
+---
+title: "Project_IST 687"
+author: "Ruchak V, Vinit H, Chaitra C, Chaitanya C, Shourya G"
+date: "02/12/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Importing libraries
+```{r}
+library(tidyverse)
+```
+
+Reading the data
+```{r}
+hotelData <- read_csv("https://intro-datascience.s3.us-east-2.amazonaws.com/Resort01.csv")
+```
+
+Descriptive Statistics
+```{r}
+str(hotelData)
+```
+
+```{r}
+summary(hotelData)
+```
+
+Visualizing and checking for missing values
+```{r}
+hotelData$Country[hotelData$Country=="NULL"] <- NA
+#Converting "NULL" in Country to NA
+hotelData  %>%
+  summarise_all(list(~is.na(.)))%>%
+  pivot_longer(everything(),
+               names_to = "columns", values_to="missing") %>%
+  count(columns, missing) %>%
+  ggplot(aes(y=columns,x=n,fill=missing))+
+  geom_col()
+```
+
+Analyzing the columns
+```{r}
+hist(hotelData$LeadTime)
+```
+```{r}
+hist(hotelData$IsCanceled, breaks = 2)
+```
+
+```{r}
+hist(hotelData$StaysInWeekendNights)
+```
+Boxplots of numerical variables against the isCanceled attribute
+
+```{r}
+boxplot(LeadTime ~ IsCanceled, data = hotelData)
+```
+Checking Patterns
+```{r}
+library(ggplot2)
+ggplot(data = hotelData, aes(x = MarketSegment, y = LeadTime, color=IsCanceled)) +
+  geom_bar(stat = "identity") 
+  #labs(x = "zipcode")
+
+ggplot(data = hotelData, aes(x = MarketSegment)) +
+  geom_bar()
+```
+```{r}
+hotelData$IsCanceled<-as.factor(hotelData$IsCanceled)
+ggplot(data = hotelData, aes(x = DepositType, y = LeadTime, color=IsCanceled)) +
+  geom_bar(stat = "identity")  
+  #labs(x = "zipcode")
+
+ggplot(data = hotelData, aes(x = DepositType)) +
+  geom_bar()
+```
+
+```
+Maps
+```{r}
+?joinCountryData2Map
+joinData <- joinCountryData2Map( hotelData,
+                                 joinCode = "ISO3",
+                                 nameJoinColumn = "Country")
+
+theMap <- mapCountryData( joinData, nameColumnToPlot="LeadTime", addLegend=FALSE )
+do.call( addMapLegend, c(theMap, legendWidth=1, legendMar = 2))
+```
