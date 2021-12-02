@@ -1,0 +1,364 @@
+---
+title: "Project 687"
+author: "Ruchak V, Vinit H, Chaitra C, Chaitanya C, Shourya G"
+date: "18/11/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+hotelData <- read_csv("https://intro-datascience.s3.us-east-2.amazonaws.com/Resort01.csv")
+```
+
+```{r}
+str(hotelData)
+```
+
+```{r}
+summary(hotelData)
+```
+
+Converting required columns to categorical factor types
+```{r}
+hotelData$IsCanceled <- as.factor(hotelData$IsCanceled)
+hotelData$Meal <- as.factor(hotelData$Meal)
+hotelData$Country <- as.factor(hotelData$Country)
+hotelData$MarketSegment <- as.factor(hotelData$MarketSegment)
+hotelData$IsRepeatedGuest <- as.factor(hotelData$IsRepeatedGuest)
+hotelData$ReservedRoomType <- as.factor(hotelData$ReservedRoomType)
+hotelData$AssignedRoomType <- as.factor(hotelData$AssignedRoomType)
+hotelData$DepositType <- as.factor(hotelData$DepositType)
+hotelData$CustomerType <- as.factor(hotelData$CustomerType)
+```
+
+```{r}
+str(hotelData)
+```
+
+Checking for NA in columns
+```{r}
+sum(is.na(hotelData$LeadTime))
+sum(is.na(hotelData$StaysInWeekendNights))
+sum(is.na(hotelData$StaysInWeekNights))
+sum(is.na(hotelData$Adults))
+sum(is.na(hotelData$Children))
+sum(is.na(hotelData$Babies))
+sum(is.na(hotelData$PreviousCancellations))
+sum(is.na(hotelData$PreviousBookingsNotCanceled))
+sum(is.na(hotelData$BookingChanges))
+sum(is.na(hotelData$RequiredCarParkingSpaces))
+sum(is.na(hotelData$TotalOfSpecialRequests))
+#We can see that all the columns are clean
+```
+Producing tables of categorical variables
+
+```{r}
+table(hotelData$IsCanceled)
+```
+
+```{r}
+table(hotelData$Meal)
+```
+
+```{r}
+table(hotelData$Country)
+```
+
+```{r}
+table(hotelData$MarketSegment)
+```
+
+```{r}
+table(hotelData$IsRepeatedGuest)
+```
+
+```{r}
+table(hotelData$ReservedRoomType)
+```
+
+```{r}
+table(hotelData$AssignedRoomType)
+```
+
+```{r}
+table(hotelData$DepositType)
+```
+
+```{r}
+table(hotelData$CustomerType)
+```
+
+Plotting using ggplot2
+
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+```
+
+
+Linear models
+```{r}
+#install.packages("caret")
+library(caret)
+#install.packages("kernlab")
+library(kernlab)
+```
+
+```{r}
+set.seed(1)
+trainList <- createDataPartition(y=hotelData$IsCanceled, p=0.66, list=FALSE)
+#creating a trainList of only the IsCanceled column with a partition at the 66%
+#mark of the dataset
+#str(trainList)
+trainSet <- hotelData[trainList,]
+#creating a training dataset of xyz records
+testSet <- hotelData[-trainList,]
+#creating a testing dataset of  xyzrecords
+```
+```{r}
+dim(trainSet) 
+#verifying that the training dataset has 26441 records
+```
+```{r}
+dim(testSet)
+#verifying that the testing dataset has 13619 records
+```
+```{r}
+modelSVM1 <- ksvm(IsCanceled ~ LeadTime, data=trainSet, C = 5, cross = 3, 
+                 prob.model = TRUE)
+```
+
+```{r}
+modelSVM1
+```
+```{r}
+predSVM1 <- predict(modelSVM1, newdata=testSet)
+```
+
+```{r}
+str(predSVM1)
+```
+
+```{r}
+confMatrix <- confusionMatrix(predSVM1, testSet$IsCanceled)
+confMatrix
+#IsCanceled and LeadTime gives accuracy of 0.7299
+```
+
+```{r}
+modelSVM2 <- ksvm(IsCanceled ~ ., data=trainSet, C = 5, cross = 3, 
+                 prob.model = TRUE)
+```
+
+```{r}
+modelSVM2
+```
+
+```{r}
+predSVM2 <- predict(modelSVM2, newdata=testSet)
+```
+
+```{r}
+str(predSVM2)
+```
+
+```{r}
+confMatrix <- confusionMatrix(predSVM2, testSet$IsCanceled)
+confMatrix
+```
+```{r}
+modelSVM3 <- ksvm(IsCanceled ~ RequiredCarParkingSpaces, data=trainSet, C = 5, cross = 3, 
+                 prob.model = TRUE)
+```
+
+```{r}
+modelSVM3
+```
+
+```{r}
+predSVM3 <- predict(modelSVM3, newdata=testSet)
+```
+
+```{r}
+str(predSVM3)
+```
+
+```{r}
+confMatrix <- confusionMatrix(predSVM3, testSet$IsCanceled)
+confMatrix
+```
+```{r}
+modelSVM4 <- ksvm(IsCanceled ~ MarketSegment, data=trainSet, C = 5, cross = 3, 
+                 prob.model = TRUE)
+```
+
+```{r}
+modelSVM4
+```
+
+```{r}
+predSVM4 <- predict(modelSVM4, newdata=testSet)
+```
+
+```{r}
+str(predSVM4)
+```
+
+```{r}
+confMatrix <- confusionMatrix(predSVM4, testSet$IsCanceled)
+confMatrix
+```
+
+```{r}
+modelSVM5 <- ksvm(IsCanceled ~ DepositType, data=trainSet, C = 5, cross = 3, 
+                 prob.model = TRUE)
+```
+
+```{r}
+modelSVM5
+```
+
+```{r}
+predSVM5 <- predict(modelSVM5, newdata=testSet)
+```
+
+```{r}
+str(predSVM5)
+```
+
+```{r}
+confMatrix <- confusionMatrix(predSVM5, testSet$IsCanceled)
+confMatrix
+```
+
+
+```{r}
+library(rpart)
+#install.packages("e1071")
+library(e1071)
+```
+LeadTime + StaysInWeekendNights + 
+                               Country + IsRepeatedGuest + PreviousCancellations
+                               + PreviousBookingsNotCanceled + BookingChanges 
+                               + DepositType + CustomerType 
+                               + TotalOfSpecialRequests
+```{r}
+cartTree <- rpart(IsCanceled ~ ., data = trainSet)
+```
+
+```{r}
+#install.packages("rpart.plot")
+library(rpart.plot)
+rpart.plot(cartTree)
+```
+```{r}
+library(tidyverse)
+varImp <- varImp(cartTree)
+arrange(varImp, desc(Overall))
+```
+
+```{r}
+
+```
+
+
+
+```{r}
+cartTree <- rpart(IsCanceled ~ ., data = trainSet)
+#creating a rpart model and saving it in a variable called cartTree
+#the outcome variable is credit_risk and the rest of the attributes are the 
+#predictors
+#prp(cartTree, faclen = 0, cex = 0.8, extra = 1)
+#prp is used to visualize the model 
+```
+
+```{r}
+#install.packages("rpart.plot")
+library(rpart.plot)
+rpart.plot(cartTree)
+#visualize the model using rpart.plot()
+```
+
+
+```{r}
+rpartPred <- predict(cartTree, newdata=testSet, type="class")
+#rpartPred stores the prediction of cartTree by using predict() on the testing 
+#dataset
+confusionMatrix(rpartPred, testSet$IsCanceled)
+#using the caret package to create a confusion matrix
+#the accuracy of this model is 0.6941 and the NIR is 0.7
+#we can see that the p-value is not lesser than 0.05 and hence we can say
+#that the model may not be that good.
+```
+
+```{r}
+varImp(cartTree)
+#we can see that amount and duration are the most important importance. 
+#The attribute 'age' is an inappropriate attribute as it is not fair to judge if
+#a person will be reliable borrowers or not on the basis of age. 
+#We would address this situation by removing this attribute and rerun the 
+#analysis
+```
+
+Association rule mining
+
+```{r}
+#install.packages("arules")
+library(arules)
+#install.packages("arulesViz")
+library(arulesViz)
+```
+
+```{r}
+hotelDataTransactions <- as(hotelData, 'transactions')
+rules1 <- apriori(hotelDataTransactions,
+                  parameter=list(supp=0.1, conf=0.55),
+                  control=list(verbose=F),
+                  appearance=list(default="lhs",rhs=("IsCanceled=1")))
+inspect(rules1)
+```
+
+
+
+```{r}
+rules2 <- apriori(hotelDataTransactions,
+                  parameter=list(supp=0.08, conf=0.55),
+                  control=list(verbose=F),
+                  appearance=list(default="lhs",rhs=("IsCanceled=0")))
+inspect(rules2)
+```
+
+Inspecting maps using country data
+```{r}
+#install.packages("rworldmap")
+library(rworldmap)
+```
+
+```{r}
+?joinCountryData2Map
+joinData <- joinCountryData2Map( hotelData,
+                                 joinCode = "ISO3",
+                                 nameJoinColumn = "Country")
+
+theMap <- mapCountryData( joinData, nameColumnToPlot="IsCanceled", addLegend=FALSE )
+do.call( addMapLegend, c(theMap, legendWidth=1, legendMar = 2))
+```
+
+```{r}
+theMap <- mapCountryData( joinData, nameColumnToPlot="LeadTime", addLegend=FALSE )
+do.call( addMapLegend, c(theMap, legendWidth=1, legendMar = 2))
+```
+```{r}
+theMap <- mapCountryData( joinData, nameColumnToPlot="DepositType", addLegend=FALSE )
+do.call( addMapLegend, c(theMap, legendWidth=1, legendMar = 2))
+```
+
