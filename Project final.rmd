@@ -339,7 +339,7 @@ inspect(rules2)
 
 Inspecting maps using country data
 ```{r}
-#install.packages("rworldmap")
+install.packages("rworldmap")
 library(rworldmap)
 ```
 
